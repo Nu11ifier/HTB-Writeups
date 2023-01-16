@@ -86,6 +86,11 @@ Navigate to: http://soccer.htb/tiny/uploads/php-reverse-shell.php
 **Results:**\
 The PHP reverse shell will trigger and open a shell from the netcat listener that was setup in the *Weaponization* phase.
 
+# Attack On Objectives
+
+USER FLAG:
+ROOT FLAG:
+
 
 
 
