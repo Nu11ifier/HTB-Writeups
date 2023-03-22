@@ -303,7 +303,7 @@ Looking at the newly generated decrypted file we get the password *p7qfAZt4_A1xo
 We change the user in current session to root using the *su root* command and then type the decrypted password.
 We then become root and can get the *root.txt* flag.
 
-![image](https://user-images.githubusercontent.com/85443537/226928486-d53d6854-c78e-4516-80c5-ed0b3460ed0c.png)
+![image](https://user-images.githubusercontent.com/85443537/226929906-a5cabaff-740e-48c9-8c42-251baba230b7.png)
 
 
 # Goals
