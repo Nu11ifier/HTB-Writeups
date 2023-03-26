@@ -105,7 +105,7 @@ We succefully log into to the user and aquire the *user.txt* flag.
 ## Inside the angoose SSH shell
 
 We type the command *sudo -l* to display what we can run as sudo using angoose user.
-We find that we can use */usr/bin/node usr/local/scripts/*.js* to read files with root permission.
+We find that we can use */usr/bin/node /usr/local/scripts/\*.js* to read files with root permission.
 
 ![image](https://user-images.githubusercontent.com/85443537/227794154-5f45da8b-0dc7-418c-86f2-7cb49dcfdb3a.png)
 
