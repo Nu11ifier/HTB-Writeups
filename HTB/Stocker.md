@@ -105,7 +105,7 @@ We succefully log into to the user and aquire the *user.txt* flag.
 ## Inside the angoose SSH shell
 
 We type the command *sudo -l* to display what we can run as sudo using angoose user.
-We find that we can use */usr/bin/node* to read files with root permission.
+We find that we can use */usr/bin/node usr/local/scripts/*.js* to read files with root permission.
 
 ![image](https://user-images.githubusercontent.com/85443537/227794154-5f45da8b-0dc7-418c-86f2-7cb49dcfdb3a.png)
 
@@ -119,11 +119,17 @@ fs.readFile('/root/root.txt', 'utf8', (err, data) => {\
 })
 
 
+We run the following command to read *root.txt* flag using our javascript:
+
+Command: *sudo /usr/bin/node /usr/local/scripts/../../../home/angoose/esc.js*
+
+![image](https://user-images.githubusercontent.com/85443537/227794600-ee312f43-a99f-463e-a9e7-986aa4592e52.png)
+
 
 
 
 # Goals
 
 * USER FLAG: 191476b128dd6b641b7c5721cfb8646b
-* ROOT FLAG: 
+* ROOT FLAG: fe430503d2545b9a19898a284f404c5a
 
